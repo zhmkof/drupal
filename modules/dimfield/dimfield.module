@@ -1,0 +1,21 @@
+<?php
+
+function dimfield_field_info() {
+	return array(
+		'dimensions' => array(
+			'label' => t('Dimensions'),
+			'description' => t('This field stores a height and width, and depth.'),
+			//定义数组，指定field和默认值
+			'settings' => array('num_dimensions' => 2),
+			'instance_settings' => array(
+				'max_height' => 0,
+				'max_width' => 0,
+				'max_depth' => 0,
+			),
+			//widget和formatter应用于一个field，当用户指定一个
+			'default_widget' => 'dimfield_combined',
+			'default_formatter' => 'dimfield_default',
+		),
+	);
+}
+
