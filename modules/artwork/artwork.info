@@ -1,0 +1,7 @@
+;$Id$
+name = Art Work
+description = create in 6
+core = 7.x
+package = Drupal 7 Development
+files[] = artwork.module
+files[] = artwork.controller.inc

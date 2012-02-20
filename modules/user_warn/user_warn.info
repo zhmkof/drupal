@@ -1,0 +1,6 @@
+;$Id$
+name = User Warn
+description = Exposes an admin interface to send behavior warning e-mails to users.
+core = 7.x
+package = Drupal 7 Development
+files[] = user_warn.module

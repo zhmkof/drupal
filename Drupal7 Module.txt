@@ -1,0 +1,209 @@
+------------------------PHP---start------------------------
+(PHP简明教程.doc)
+语法：
+<?php......?>
+<?......?>
+require("file.php");//通常放在最前面，执行前读入
+include("file.php");//一般放在流程控制的处理部分中，执行到时读入
+<?php
+	echo "string;\n";//注释内容
+	/*注释内容*/
+	echo "string;\n";#注释内容
+?>
+$str = "string";
+$line = "string\n";
+$int1 = 38;
+$float1 = 1.732;
+$float2 = 1.4#+2;
+$array1 = array("1", "2", "a", "b", "c");
++、-、*、/、%、++、--
+$a = "aaa";
+$b = "bbb";
+echo $a.$b;//"."号连接字符串
+<、>、<=、>=、==、!=、&&、and、||、or、xor、!
+if(expr){statement}//单行可省略大括号
+if(expr){statement}else{statement};
+if..else if...else...
+for(expr1; expr2; expr3){statement};
+switch(expr){case expr1:statement1;break; case......;default:statementN;break;}
+$obj->username;
+$_POST['html_id'];//提取POST过来的数据
+$_GET['html_id'];//提取GET过来的数据
+数据库：
+mysql_connect(string[hostname][:port], string[username], string[password]);
+mysql_select_db(string[database_name], int[link_identifier]);
+mysql_query(string[query], int[link_identifier]);
+mysql_fetch_object(int[result], int[result_typ]);//遍历查询结果
+SESSION：
+session_start();//开启SESSION
+$_SESSION['item'] = "item1";
+$item1 = $_SESSION['item'];
+empty($_SESSION['inum']);//inum是否为空
+echo "<script>alert('Password Check Error!');location.href='login.php';</script>";
+ceil($num/10));
+<a href="xxx.php?page=<?=($page-1)?>">PrevPage</a>
+<a href="xxx.php?page=<?=ceil($num/10)-1?>">LastPage</a>
+上传文件和发送邮件：
+表单必须加上enctype="multipart/form-data"和<input type="file" name="file">
+$f = & $HTTP_POST_FILES['file'];
+$dest_dir = 'uploads';//设定上传目录
+$dest = $dest_dir.'/'.date("ymd")."_".$f['name'];//设置文件名为日期加上文件名避免重复
+$r = move_uploaded_file($f['tmp_name'], $dest);//这个函数是关键
+chmod($dest, 0755);//设定上传的文件的属性
+mail("收件人地址", "主题", "正文", "From:发件人\r\nReply-to:发件人的地址");
+------------------------PHP----end-------------------------
+------------------------Drupal 7 Module---start------------------------
+一、
+使用procedural programming(过程式编程)方式开发
+Drupal modules由函数集组成
+Drupal core libraries
+Drupal hooks
+Drupal core modules
+The Database
+The theme system
+Drupal's major subsystems
+(Theme,Menus(树状结构),Nodes(类似文本结构),Files,Users,Comments,
+Fields and entities,Forms API,Installation Profiles,
+Simple test,Blocks,Other subsystems)
+二、
+一个module有两个名字：human-readable name和machine-readable name
+名字的大写会转换成小写
+/modules目录只给核心Drupal模块保留，每次更新会被重写
+/sites/all/modules目录全是未更改模块，除非运行多站点配置并且自定义模块需要访问所有站点
+/sites/default/modules或者/sites/all/modules/custom目录通常存放自定义模块
+目录名称为machine-readable name，.info和.module文件也要以machine-readable name为文件名
+.info文件提供此模块的human-readable name信息，需要依赖哪些modules，此modules有哪些代码文件等
+.info格式：
+;$Id$
+name = first
+description = A first module.
+package = Drupal 7 Development
+core = 7.x
+files[] = first.module
+;dependencies[] = autoload
+;php = 5.2
+1.如果value占用超过一行，应该用引号标记
+2.";"开头的行会被视为注释而被Drupal INI忽略
+3.第一行是标准，每个.info文件都应该以";$Id$"开头。它是版本控制系统存储此文件的信息的占位符
+4.name和description是必须指定的，name定义human-raedable name，description定义此模块的描述
+5.package标识这个module与哪些modules有关
+6.core
+7.files[]，每个.info文件必须公布模块里哪些文件包含了PHP的函数、类、接口
+.module格式：
+1.".module"文件通常包含这个模块的所有主要的钩子实现
+2.当Drupal遇到含有hook的事件，Drupal将会遍历、执行所有modules寻找匹配的hook实现
+3.以"<?php"开头，可省略"?>"
+4.每个module都可以有一个hook_help()实现
+5.hook_help()参数$path是帮助系统的URI路径，$arg是访问此URI的参数
+6.t('string')负责转换一种语言的字符到其他语言，不能t($var)调用[P41]
+7.hook_block_info()告诉Drupal添加新block[声明block]
+8.hook_blick_view()告诉Drupal新block请求显示时要做些什么[显示block]
+9.每个module只能够实现提供一个hook一次，只能有一个first_block_info()
+10.当module需要创建多个block，必须使一个block实现管理多个block的功能
+11.hook_block_info()不需要入参，返回array。
+12.info提供此block的一句话描述，cache告诉Drupal此block怎样缓存数据
+13.hook_block_view(block名字检索)，返回此检索的数组数据
+14.theme(theme_operation_name, theme_operation_associative_variables_array)
+15.module_invoke(module_name, hook_name)调用给一个特定的module下一个特定的钩子
+三、
+1.presentation logic显示逻辑
+2.如果主题提供了自己的实现，Drupal将会替换调module的主题
+3.PHPTemplate theme engine
+4.实现主题钩子方式：a.Theme functions;b.Templates
+5.theme_THEME_HOOK_NAME($variables)，入参是想在函数里使用的数据组成的数组
+6.MODULE_preprocess_THEME_HOOK_NAME(&$variables)，不返回数据
+7.template_preprocess_THEME_HOOK_NAME(&$variables)
+  拥有主题钩子参数的预处理权限，且应该在其他moddule预处理函数前执行
+8.MODULE_preprocess(&$variables, $hook)，template函数和多个钩子的预加载函数
+  hook包含正在运行的主题钩子的名字
+9.过程函数在预初始化函数之后执行
+10.过程函数：template-prefixed process functions, multi-hook process functions,
+   module-provided process functions, theme-provided process functions
+11.过程函数在所有预处理函数运行完毕之后运行
+12.Drupal7在template_process_html()函数运行前生成CSS和js文件列表
+13.所有预处理函数都比所有过程函数先运行
+14.template_prefixed函数首先运行，MODULE_prefixed函数第二位运行，THEME_prefixed函数最后运行
+15.Multi-hook函数在hook-specific函数前运行
+16.执行一个特定主题的钩子所遵循的执行流程：
+	template_preprocess()
+	template_preprocess_HOOK()
+	MODULE_preprocess()
+	MODULE_preprocess_HOOK()
+	THEME_preprocess()
+	THEME_preprocess_HOOK()
+	template_process()
+	template_process_HOOK()
+	MODULE_process()
+	MODULE_process_HOOK()
+	THEME_process()
+	THEME_process_HOOK()
+17.Render element是一个复杂数据结构，通过传递一个单独的参数[arrays]给theme()
+18.着色元素数组包含：需要着色的数据，此元素下面的其他着色元素，
+   在应用此数据时能够用上的主题钩子，应用主题前后将要调用的回调函数列表
+19.着色元素内部用drupal_render()输出[$output .= drupal_render($element);]
+20.$element格式：
+   属性以"#"开头，子元素不以"#"开头，值会在发送到具体主题实现前于theme()里替换调"#"
+21.Render properties有两个定义的地方：
+   第一个地方是直接在drupal_render()和它的帮助函数里定义[drupal_render()使用的属性列表P79]
+   第二个地方是在hook_element_info()里定义
+22.每个#type元素都必须在hook_element_info()的实现里定义
+23.使用system_element_info()的框架，modules能够通过实现hook_element_info()
+   去创建各自的复杂着色元素，并且创建任何回调和关联API
+24.opportunities延迟
+25.hook_page_alter()的两个有用的例子是：
+   允许插入一个block到页面的主内容，或者在页面范围内翻转、移动"Field"到某个地点
+四、
+1.theme_item_list()，期望作为一个item数组参数
+2.构建默认主题步骤：
+	a.注册主题钩子，并定义默认参数
+	b.构建主题钩子的默认实现
+	c.重构注册主题
+	d.构建用于主题钩子的着色元素
+3.$classes变量被template_processs()创建，与它相当的$classes_array被template_preprocess()创建
+4.如果我们需要添加classes到$classes，添加一个数组元素到$classes_array就可以
+五、
+1.using hook_menu() to mapping Drupal functions to menu items
+2.用variable_set()和variable_get()管理Drupal的设置
+3.用drupal_mail()和hook_mail()发送邮件
+4.如果访问的页面不存在，Drupal将会跳转到上级地址（逐层跳转知道该地址存在）
+5.Permissions are defined by modules using hook_permission()
+6.查找访问权限信息的唯一途径是通过检查hook_perm()的实现
+7.Form API, Field API, File API
+8.Form API在Drupal安全性里是一个重要的元素
+9.drupal_get_form()需要传递一个form ID，可以是任意值，但是在Drupal必须是唯一的，
+  典型的命名方式是<module_name>_<description>_form
+10.http://www.v2ex.com/rework
+11.'#type' => 'value'时传递的value可以是任意数据结构，value元素不包含进返回的HTML代码
+12.Persistent variables are saved using variable_set()set(), and retrieved usingvariable_get()
+13.http://v.youku.com/v_show/id_XMzM1NDc1ODc2.html
+14.system_settings_form()
+15.发送邮件流程
+   a.调用drupal_mail()
+   b.Drupal根据drupal_mail()头信息创建邮件信息
+   c.drupal_mail()里调用hook_mail()的实现，添加了邮件内容
+   d.邮件的所有组成都发送到hook_mail_alter()，允许其他modules修改
+   e.邮件传送到durpal_send_mail()
+   f.*通常只需要实现druapl_mail()和hook_mail()
+16.Drupal's token system,格式如"[site:name]"也可如"[node:author:e-mail]",token_replace()会自动替换
+六、
+1.相对于创建单独node类型，更有必要创建entities的情况:
+  a.我们需要entities拥有相对于nodes完全不同的权限控制或者工作流
+  b.我们需要访问entities且不存储到本地数据库，譬如传统的数据存储
+  c.我们需要拥有内部变量，像node类型，但是nodes不支持子类型
+2.旧版本只有nodes支持sub-types，7以后版本所有entities都支持，Drupal里的sub-types称为bundles
+3.bundle是entity里可单独配置的sub-type，Node类型是bundle的一个例子
+4.不是所有的entity类型都有bundle，如Users就没有独立的bundle
+5.真实的用例中通常允许包含一个Administration系统，以创建、管理bundles
+6.用Schema API（Drupal数据层的一部分，不依赖数据库的API）创建数据表
+7.hook_schema()是".install"文件最重要的钩子，定义该module提供哪些数据表
+8.A "controller" is an object that handles the loading of the entity object for us
+9.static cache表示controller需要在内存中保存一份entity副本
+10.fieldable表示可以通过Field API给entity和node附加字段，是可定义新entity类型的主要原因之一
+11.所有Drupal路径使用连接符代替下划线，但bundle名字必须使用下划线
+12.drupal_static()函数，担当PHP静态变量的中心集合
+13.当系统某个部分没有独立的$reset参数时，系统强制重置静态缓存
+14.当一些代码尝试创建Controller的新实例时，Controller将会懒加载*.inc文件，使class可使用
+15.
+------------------------Drupal 7 Module----end-------------------------
+------------------------PHP---start------------------------
+------------------------PHP----end-------------------------
