@@ -1,0 +1,5 @@
+; $Id$
+name = hello world
+description = "Yet another hello world module."
+core = 7.x
+files[] = hello_world.module

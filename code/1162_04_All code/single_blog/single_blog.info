@@ -1,0 +1,9 @@
+;$Id$
+
+name = Single blog
+description = Enables a single blog for an individual or multiple users.
+
+core = 7.x
+package = Drupal 7 Development
+
+files[] = single_blog.module

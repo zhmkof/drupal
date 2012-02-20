@@ -203,7 +203,16 @@ files[] = first.module
 12.drupal_static()函数，担当PHP静态变量的中心集合
 13.当系统某个部分没有独立的$reset参数时，系统强制重置静态缓存
 14.当一些代码尝试创建Controller的新实例时，Controller将会懒加载*.inc文件，使class可使用
-15.
+15.check_plain()，过滤不信任的字符
+16.menu_get_item()返回当前菜单条目，system_admin_menu_block()，通过任意菜单条目获取对应子菜单
+17.transactions不支持MySQL和MyISAM数据表
+七、
+Field API组成
+Field type:field名字和数据结构(不是如何保存、如何显示)
+Field:field类型的详细配置
+Field instance:说明一个特殊的field的组成是一个bundle还是entity类型的子类
+Widget:给内容编辑器的一个表格元素
+Formatter:
 ------------------------Drupal 7 Module----end-------------------------
 ------------------------PHP---start------------------------
 ------------------------PHP----end-------------------------
