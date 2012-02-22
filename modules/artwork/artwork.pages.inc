@@ -226,20 +226,51 @@ function artwork_delete_confirm_submit($form, &$form_state) {
  * the title.
  */
 function artwork_page_list_recent() {
-  $content = array();
+	$content = array();
 
-  $query = new EntityFieldQuery();
-  $query
-    ->entityCondition('entity_type', 'artwork')
-    ->propertyOrderBy('created', 'DESC')
-    ->fieldCondition('field_artist', 'value', 'Da Vinci', 'CONTAINS', 0)
-    ->range(0, 5);
-  $result = $query->execute();
+	$query = new EntityFieldQuery();
+	$query
+		->entityCondition('entity_type', 'artwork')//过滤entity_type为artwork
+		->propertyOrderBy('created', 'DESC')//根据created降序排序
+		//filed名字为'field artist'，value字段匹配'Da Vinci'
+		->fieldCondition('field_artist', 'value', 'Da Vinci', 'CONTAINS', 0)
+		->range(0, 5);//开始位置,总数
+	$result = $query->execute();
+	/*不加filedCondition()时的查询SQL相当于：
+SELECT artwork.aid AS entity_id, artwork.vid AS revision_id, artwork.type AS bundle, 'artwork' AS entity_type
+FROM
+artwork artwork
+ORDER BY artwork.created DESC
+LIMIT 5 OFFSET 0
+	*/
+	/*添加filedCondition()时的查询SQL相当于：
+SELECT
+field_data_field_artist0.entity_id AS entity_id,
+field_data_field_artist0.revision_id AS revision_id,
+field_data_field_artist0.bundle AS bundle,
+fcet.type AS entity_type
+FROM
+field_data_field_artist field_data_field_artist0
+INNER JOIN
+field_config_entity_type fcet ON fcet.etid = field_data_field_artist0.etid
+INNER JOIN
+artwork artwork ON artwork.aid = field_data_field_artist0.entity_id
+WHERE
+(field_data_field_artist0.field_artist_value = 'Da Vinci')
+AND
+(field_data_field_artist0.deleted = 0)
+AND
+(fcet.type = 'artwork')
+ORDER BY artwork.created DESC
+LIMIT 5 OFFSET 0
+	*/
 
-  $artworks = artwork_load_multiple(array_keys($result['artwork']));
-  foreach ($artworks as $artwork) {
-    $content[$artwork->aid] = artwork_page_view($artwork, 'teaser');
-  }
+	//加载所有能查询到的artwork，
+	//用array_keys()运行$result['artwork']数组，得到他们的ID数组并加载
+	$artworks = artwork_load_multiple(array_keys($result['artwork']));
+	foreach ($artworks as $artwork) {
+		$content[$artwork->aid] = artwork_page_view($artwork, 'teaser');
+	}
 
-  return $content;
+	return $content;
 }

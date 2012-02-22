@@ -97,6 +97,13 @@ function artwork_load_multiple($aids = array(), $conditions = array(),
 }
 
 function artwork_menu() {
+	$item['artwork/recent'] = array(
+		'title' => 'Recently added artworks',
+		'page callback' => 'artwork_page_list_recent',
+		'access arguments' => array('view artworks'),
+		'file' => 'artwork.pages.inc',
+	);
+
 	$items['artwork/add'] = array(
 		'title' => 'Add new artwork',
 		'page callback' => 'artwork_add_page',
@@ -205,3 +212,34 @@ function artwork_delete_multiple($aids) {
 	return entity_get_controller('artwork')->delete($aids);
 }
 /*************删除Artwork--end*****************/
+
+/**********************************************/
+/**
+* "extra_fields"钩子
+* 定义每个entity类型和每个bundle
+*/
+function artwork_field_extra_fields() {
+	$extra = array();
+	//遍历所有类型并声明这些类型都有一个pseudo-filed标题
+	//pseudo-field是当前显示的编辑表格（第一个key）和单显示（第二个key）
+	foreach (artwork_types() as $type) {
+		$extra['artwork'][$type->type] = array(
+			'form' => array(
+				'title' => array(
+					'label' => t('Title'),
+					'description' => t('The name of the artwork'),
+					'weight' => -5,
+				),
+			),
+			'display' => array(
+				'title' => array(
+					'label' => t('Title'),
+					'description' => t('The name of the artwork'),
+					'weight' => -5,
+				),
+			),
+		);
+	}
+	return $extra;
+}
+

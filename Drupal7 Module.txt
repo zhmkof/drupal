@@ -227,15 +227,58 @@ files[] = first.module
    [module]_field_formatter_view()和[module]_table()
    [module]_field_formatter_settings_form()和[module]_field_formatter_settings_summary()
 12.Apache Solr
-13.provide a query builder for Entities and Fields as a single class name EntityFieldQuery
+13.用一个名字为EntityFieldQuery的类为entities和fileds提供一个查询构造器
    three "levels" of data can filter:
-   a.Entity level data,data that is common to all entities of all types.include entity type,bundle name,entity id, revision id
-   b.Properties,data elements that are common to all objects of a given entity type,but not to all entities
-   c.Fields,specific to a given bundle definition,may also be shared by entities of different types
-14.widget能与URL或者第三方数据交互，处理默认值，或者根据某些条件显示表格field的不同点
-15.formatter能使用主题系统以显示数据本身或者影响JS库去创建可视化交互式的field数据
+   a.Entity level data,所有entites的所有类型的数据，包含entity类型,bundle名字,entityID,revisionID
+   b.Properties,根据提供的一个entity类型查询所有Object的数据元素，但不是所有entity
+   c.Fields,针对提供的一个bundle定义，可能也会被entity共享不同的类型
+14.entityOrderBy(),propertyCondition(),fieldOrderBy()
+15.widget能与URL或者第三方数据交互，处理默认值，或者根据某些条件显示表格field的不同点
+16.formatter能使用主题系统以显示数据本身或者影响JS库去创建可视化交互式的field数据
 八、权限和安全
+1.权限处于Drupal安全范围内。
+2.user_access(string, account),权限的机器名称,$user对象的副本[user_load()返回]
+3.hook_permission()返回此模块的所有必须的权限信息
+4.drupal_exit()终止页面继续加载其余部分，不要直接使用PHP的exit(),可能会终止内部函数或者钩子
+5.可以用MENU_ACCESS_DENIED代替drupal_exit()
+6.页面层的访问检查：
+  如果把访问检查放到菜单回调，当检查通过，tab链接将只被渲染，通常做法
+  如果把访问检查放到页面回调，无论是否通过，tab链接都会被渲染，体验不好
+  drupal_access_denied()返回服务器的403页面，设置面板可指定自定义的403、404页面
+8.在模块的install文件里实现hook_enable()，能用代码的方式定义权限，函数内容如：
+  $permissions = array('view page');
+  //如果是设置数组，则
+  $permissions = array(
+	'view page' => TRUE,
+	'access content' => FALSE;
+  );
+  user_role_change_permissions(DRUPAL_AUTHENTICATED_USER,$permissions);
+9.和上条相对应的，也可以实现hook_disable()，用user_role_revoke_permissions()设置拒绝权限
+10.user_role_save()和user_role_delete()函数能设置模块的角色[role]
+11.user_rolr_load_by_name(),user_role_grant_permissions()
+12.当Drupal通过Form API生成表格时，会添加一个用md5哈希生成的form_build_id的token去鉴定
+   在drupal_build_form()里实现这个id
+13.user_access()
+   $form['menu'] = array(
+	'#type' => 'fieldset',
+	'#title' => t('Menu settings'),
+	'#access' => user_access('administer menu'),//在Form API里，此属性和#disabled不同
+	'#collapsible' => TRUE,
+	'#collapsed' => !$link['link_title'],
+   );
+14.传送HTML的隐藏元素，表格属性'#type' => 'value'
+15.Using AJAX in other contexts木有细看
 九、节点接入
+1.Node Access系统提供一个决定授权、权限的API，
+2.node的基本操作：CRUD(Create,Read,Update,Delete)
+3.（控制node访问安全）Node访问权限记录两个实例：
+  什么时候的请求对创建个体node起作用（通常由菜单回调和node_access()函数处理）
+  什么时候的数据库查询返回符合条件的node列表
+4.数据库查询中的query:->addTag('node_access')指令调用node_query_node_access_alter()函数，
+  此函数当查询发送到数据库时，应用'允许node访问规则'，
+  不需要那么多查看、编辑、删除等授权，忽略站点的权限定义
+5.node_access()是node操作的主要访问回调，在node_menu()定义，作为创建查看编辑删除node的访问回调
+6.
 十、JavaScript
 十一、文件和图像
 十二、安装配置文件
