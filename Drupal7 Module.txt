@@ -1,3 +1,4 @@
+start in 2012.2.7 end in 2012.2.29
 ------------------------PHP---start------------------------
 (PHP简明教程.doc)
 语法：
@@ -53,7 +54,7 @@ chmod($dest, 0755);//设定上传的文件的属性
 mail("收件人地址", "主题", "正文", "From:发件人\r\nReply-to:发件人的地址");
 ------------------------PHP----end-------------------------
 ------------------------Drupal 7 Module---start------------------------
-一、
+一、介绍
 使用procedural programming(过程式编程)方式开发
 Drupal modules由函数集组成
 Drupal core libraries
@@ -65,7 +66,7 @@ Drupal's major subsystems
 (Theme,Menus(树状结构),Nodes(类似文本结构),Files,Users,Comments,
 Fields and entities,Forms API,Installation Profiles,
 Simple test,Blocks,Other subsystems)
-二、
+二、简单模块
 一个module有两个名字：human-readable name和machine-readable name
 名字的大写会转换成小写
 /modules目录只给核心Drupal模块保留，每次更新会被重写
@@ -105,7 +106,7 @@ files[] = first.module
 13.hook_block_view(block名字检索)，返回此检索的数组数据
 14.theme(theme_operation_name, theme_operation_associative_variables_array)
 15.module_invoke(module_name, hook_name)调用给一个特定的module下一个特定的钩子
-三、
+三、主题层
 1.presentation logic显示逻辑
 2.如果主题提供了自己的实现，Drupal将会替换调module的主题
 3.PHPTemplate theme engine
@@ -152,7 +153,7 @@ files[] = first.module
 24.opportunities延迟
 25.hook_page_alter()的两个有用的例子是：
    允许插入一个block到页面的主内容，或者在页面范围内翻转、移动"Field"到某个地点
-四、
+四、模块样式
 1.theme_item_list()，期望作为一个item数组参数
 2.构建默认主题步骤：
 	a.注册主题钩子，并定义默认参数
@@ -161,7 +162,7 @@ files[] = first.module
 	d.构建用于主题钩子的着色元素
 3.$classes变量被template_processs()创建，与它相当的$classes_array被template_preprocess()创建
 4.如果我们需要添加classes到$classes，添加一个数组元素到$classes_array就可以
-五、
+五、Admin接口
 1.using hook_menu() to mapping Drupal functions to menu items
 2.用variable_set()和variable_get()管理Drupal的设置
 3.用drupal_mail()和hook_mail()发送邮件
@@ -185,7 +186,7 @@ files[] = first.module
    e.邮件传送到durpal_send_mail()
    f.*通常只需要实现druapl_mail()和hook_mail()
 16.Drupal's token system,格式如"[site:name]"也可如"[node:author:e-mail]",token_replace()会自动替换
-六、
+六、Content
 1.相对于创建单独node类型，更有必要创建entities的情况:
   a.我们需要entities拥有相对于nodes完全不同的权限控制或者工作流
   b.我们需要访问entities且不存储到本地数据库，譬如传统的数据存储
@@ -206,14 +207,40 @@ files[] = first.module
 15.check_plain()，过滤不信任的字符
 16.menu_get_item()返回当前菜单条目，system_admin_menu_block()，通过任意菜单条目获取对应子菜单
 17.transactions不支持MySQL和MyISAM数据表
-七、
+七、Field
 1.Field API组成
 	Field type:field名字和数据结构(不是如何保存、如何显示)
 	Field:field类型的详细配置
 	Field instance:说明一个特殊的field的组成是一个bundle还是entity类型的子类
 	Widget:给内容编辑器的一个表格元素
 	Formatter:格式化field样式的代码段，将覆盖Drupal主题系统
-2.
+2.尽管不是绝对需要(大多数field将会通过drupal的网络接口配置)，还是可给field设置提供一个配置表
+3."One" is simply a special case of "many".
+4.validate钩子里（扩展至Drupal的大多数情况下），field作为数组的item传送，而不是单独的item
+5.widget是简单的Form API片段，扩展Form组件，能够构建成一个大表格，
+6.widget的典型用途是构建一个不需要保存field类型本身，只需要保存field值的组件
+7.创建的表格元素与dimensions field栏的名字相同
+8.explode()函数，根据第一个参数分割字符串，组合成数组；list()将会分割此数组
+9.用form_set_value()设置表格元素的值
+10.$form_state集合与field的栏目相匹配
+11.formatter有两个回调，大多数只用其中一个。
+   [module]_field_formatter_view()和[module]_table()
+   [module]_field_formatter_settings_form()和[module]_field_formatter_settings_summary()
+12.Apache Solr
+13.provide a query builder for Entities and Fields as a single class name EntityFieldQuery
+   three "levels" of data can filter:
+   a.Entity level data,data that is common to all entities of all types.include entity type,bundle name,entity id, revision id
+   b.Properties,data elements that are common to all objects of a given entity type,but not to all entities
+   c.Fields,specific to a given bundle definition,may also be shared by entities of different types
+14.widget能与URL或者第三方数据交互，处理默认值，或者根据某些条件显示表格field的不同点
+15.formatter能使用主题系统以显示数据本身或者影响JS库去创建可视化交互式的field数据
+八、权限和安全
+九、节点接入
+十、JavaScript
+十一、文件和图像
+十二、安装配置文件
+附录A、数据库访问
+附录B、安全
 ------------------------Drupal 7 Module----end-------------------------
 ------------------------PHP---start------------------------
 ------------------------PHP----end-------------------------
