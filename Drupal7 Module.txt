@@ -277,9 +277,40 @@ files[] = first.module
 4.数据库查询中的query:->addTag('node_access')指令调用node_query_node_access_alter()函数，
   此函数当查询发送到数据库时，应用'允许node访问规则'，
   不需要那么多查看、编辑、删除等授权，忽略站点的权限定义
-5.node_access()是node操作的主要访问回调，在node_menu()定义，作为创建查看编辑删除node的访问回调
-6.
+5.node_access(op,node,account)是node操作的主要访问回调，
+  在node_menu()定义，作为创建查看编辑删除node的访问回调
+  op表明Node操作被请求，node参数用在创建Node的情况，
+  在整个页面请求过程中，静态存储每个用户的访问权限
+6.[module]_node_access()和[module]_node_grants()
+7.无论什么时候，写访问检查时，FALSE都是默认返回值
+8.P251的Create、Update、Delete操作Demo
+9.node_access表用node id(nid)作为主键，只用来检查已发布的文章的访问权限
+10.只实现hook_node_access()的module不在node_access表添加记录，也不添加查询变更逻辑
+11.NODE_ACCESS_ALLOW,NODE_ACCESS_DENY,NODE_ACCESS_IGNORE
+12.只有Node访问Module才能通过视图操作维护规则，访问控制Module能克制这么做
+13.access control module和node access module
+14.hook_node_access()只对运行个人Node的访问检查有效
+15.hook_node_access()能否决由其他Module定义的行为，可能不太令人满意
+16.hook_node_access()推荐给单用例module，尤其是为特殊site或者project的Module
+17.Node access module能与其他module协作，提供灵活的访问控制规则
+   一个Module的Node access rules可能被其他Module修改，hook_node_access()无法实现
+   Node access module代表通常的使用场景地址，且能被更多people复用
+18.access control module和node access module的主要区别是使用node_access表
+   当node access module已经安装，数据库会把node表添加到node_access表以达到划清返回值的列表的目的
+19.node_access表包含一个单独的记录，这允许所有内容都能显示给所有用户
+20.当所有node access module激活，这个默认记录会被删除，node查询将会作适当修改
+21.P264，node_access表各字段含义(每条记录定义node的规则设定，此表不关心node的发布状态)
+22.role_access_node_grants($account, $op)
+23.However, if your module relies on data not stored by Drupal core or
+   contributed modules – both of which should be listed as dependencies[] in your
+   module.info file – then it is your responsibility to store the data necessary to rebuild
+   the {node_access} table properly.
+24.Domain Access module
+25.hook_node_load()
+26.hook_node_access_records_alter()和hook_node_grants_alter()
+27.Devel Node Access module
 十、JavaScript
+1.
 十一、文件和图像
 十二、安装配置文件
 附录A、数据库访问
