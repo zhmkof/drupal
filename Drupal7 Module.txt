@@ -310,7 +310,8 @@ files[] = first.module
 26.hook_node_access_records_alter()和hook_node_grants_alter()
 27.Devel Node Access module
 十、JavaScript
-1.
+1.cancle team buy about big city small cook
+2.
 十一、文件和图像
 十二、安装配置文件
 附录A、数据库访问
