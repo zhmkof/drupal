@@ -167,7 +167,7 @@ files[] = first.module
 2.用variable_set()和variable_get()管理Drupal的设置
 3.用drupal_mail()和hook_mail()发送邮件
 4.如果访问的页面不存在，Drupal将会跳转到上级地址（逐层跳转知道该地址存在）
-5.Permissions are defined by modules using hook_permission()
+5.module用hook_permission()定义Permissions
 6.查找访问权限信息的唯一途径是通过检查hook_perm()的实现
 7.Form API, Field API, File API
 8.Form API在Drupal安全性里是一个重要的元素
@@ -176,16 +176,15 @@ files[] = first.module
 10.http://www.v2ex.com/rework
 11.'#type' => 'value'时传递的value可以是任意数据结构，value元素不包含进返回的HTML代码
 12.Persistent variables are saved using variable_set()set(), and retrieved usingvariable_get()
-13.http://v.youku.com/v_show/id_XMzM1NDc1ODc2.html
-14.system_settings_form()
-15.发送邮件流程
+13.system_settings_form()
+14.发送邮件流程
    a.调用drupal_mail()
    b.Drupal根据drupal_mail()头信息创建邮件信息
    c.drupal_mail()里调用hook_mail()的实现，添加了邮件内容
    d.邮件的所有组成都发送到hook_mail_alter()，允许其他modules修改
    e.邮件传送到durpal_send_mail()
    f.*通常只需要实现druapl_mail()和hook_mail()
-16.Drupal's token system,格式如"[site:name]"也可如"[node:author:e-mail]",token_replace()会自动替换
+15.Drupal's token system,格式如"[site:name]"也可如"[node:author:e-mail]",token_replace()会自动替换
 六、Content
 1.相对于创建单独node类型，更有必要创建entities的情况:
   a.我们需要entities拥有相对于nodes完全不同的权限控制或者工作流
@@ -315,6 +314,52 @@ files[] = first.module
 十二、安装配置文件
 附录A、数据库访问
 附录B、安全
-------------------------Drupal 7 Module----end-------------------------
+------------------------Drupal 7 Module---end-------------------------
+------------------------Development note---start------------------------
+Entity
+Drupal的抽象数据类型，必须实现core Entity API里定义的Entity接口
+这是node,comment,user,早前版本的术语类型分类，的统称
+在Drupal7里，只有来自CRUD的R是core里指定的，但是在下一个版本正在进行工作以填补空缺。
+Entity能有多个bundle
+
+Bundle
+Bundle是field的组合。一个bundle是一个entity的实现，特例。
+如果node是一个entity，那么一个article就是一个bundle。
+这允许系统区别kind和type，kind
+
+Field
+Field是具备同样名字的已经迁移到Drupal core的CCK数据类型的体现(典型)。
+一个field是一个私有的drupal数据类型，实现了这些网页界面的描述。
+Field拥有一个关联的schema(架构、描述)，格式化widget和setting。
+例子有：file field,text field,。
+module能定义新的field类型。
+
+Field Instance
+一个Field实现是一个具体的专业化的field类型。
+它把field类型捕捉到一齐，和他们的配置一起：schema,formatter,widget。
+field实现附属于bundle
+
+Fieldable object
+这个术语有时用于entity和bundle
+
+hook_block_info()告诉Drupal添加新block[声明block]，不需要入参，返回array。
+hook_blick_view()告诉Drupal新block请求显示时要做些什么[显示block]
+hook_block_view(block名字检索)，返回此检索的数组数据
+module_invoke(module_name, hook_name)调用给一个特定的module下一个特定的钩子
+hook_perm()查找访问权限信息的唯一途径
+drupal_get_form(form_ID)ID可以是任意值，但是在Drupal必须是唯一的，典型命名:<module_name>_<description>_form
+system_settings_form()
+$form_state集合与field的栏目相匹配
+page callback，当请求的地址请求完毕后调用，当没有匹配的地址时会把地址传进去
+access callback和access arguments定义用户是否有权限进入请求的菜单
+
+http://api.drupal.org/api/drupal/modules%21field%21field.attach.inc/function/field_attach_prepare_view/7
+http://api.drupal.org/api/drupal/includes%21common.inc/function/entity_prepare_view/7
+
+http://v.youku.com/v_show/id_XMzM1NDc1ODc2.html
+
+当进入admin/config/annotate/settings时需要调用drupal_get_form来构造一个表单（用于模块的设置）
+
+------------------------Development note---end------------------------
 ------------------------PHP---start------------------------
 ------------------------PHP----end-------------------------

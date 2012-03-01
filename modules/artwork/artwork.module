@@ -91,8 +91,7 @@ function artwork_load($aid = NULL, $vid = NULL, $reset = FALSE) {
 	$artwork = artwork_load_multiple($aids, $conditions, $reset);
 	return $artwork ? reset($artwork) : FALSE;
 }
-function artwork_load_multiple($aids = array(), $conditions = array(),
-								$reset = FALSE) {
+function artwork_load_multiple($aids = array(), $conditions = array(), $reset = FALSE) {
 	return entity_load('artwork', $aids, $conditions, $reset);
 }
 
@@ -100,7 +99,8 @@ function artwork_menu() {
 	$item['artwork/recent'] = array(
 		'title' => 'Recently added artworks',
 		'page callback' => 'artwork_page_list_recent',
-		'access arguments' => array('view artworks'),
+		//如果没定义access callback，系统会调用user_access函数代替
+		'access arguments' => array('view artworks'),//view artworks是权限名称？
 		'file' => 'artwork.pages.inc',
 	);
 
