@@ -315,7 +315,7 @@ files[] = first.module
 附录A、数据库访问
 附录B、安全
 ------------------------Drupal 7 Module---end-------------------------
-------------------------Development note---start------------------------
+------------------------Development plus---start------------------------
 Entity
 Drupal的抽象数据类型，必须实现core Entity API里定义的Entity接口
 这是node,comment,user,早前版本的术语类型分类，的统称
@@ -352,14 +352,78 @@ system_settings_form()
 $form_state集合与field的栏目相匹配
 page callback，当请求的地址请求完毕后调用，当没有匹配的地址时会把地址传进去
 access callback和access arguments定义用户是否有权限进入请求的菜单
+引导指令(bootstrap)
+
+db_query("SELECT * FROM {mymodule_abc} WHERE abc_id = :abc_id", array(':abc_id' => $abc_id))->fetchObject();
 
 http://api.drupal.org/api/drupal/modules%21field%21field.attach.inc/function/field_attach_prepare_view/7
 http://api.drupal.org/api/drupal/includes%21common.inc/function/entity_prepare_view/7
 
 http://v.youku.com/v_show/id_XMzM1NDc1ODc2.html
+------------------------Development plus---end------------------------
+------------------------Development note---start------------------------
+hook_help($path, $arg)
+当请求的地址相匹配时，在响应页面的首行位置添加返回的字符串
 
-当进入admin/config/annotate/settings时需要调用drupal_get_form来构造一个表单（用于模块的设置）
+fetchField()
+从数据库中获取单个字段值
+
+user_load()加载用户对象
+$owner = user_load(array('uid'=>$node->uid));//在节点内
+$owner = user_load(array('uid'=>$comment->uid));//在评论中
+$owner = user_load(array('uid'=>$user->uid));//在用户资料中
+
 
 ------------------------Development note---end------------------------
+------------------------Pro Drupal 7 Development---start------------------------
+一、数据库层
+位于sites/example.com/settings.php或者sites/default/settings.php
+定义数据库连接的代码行如下所示(以MySQL为例)：
+$db_url = 'mysql://username:password@localhost/databasename';
+通过检查settings.php内部的变量$db_url，Drupal决定要连接的数据库的类型。
+#如果$db_url开始部分为“mysql”，那么Drupal将包含进includes/database.mysql.inc
+1.db_query()用来为已建立的数据库连接执行查询语句。这些查询语句包括SELECT, INSERT, UPDATE, 和 DELETE。
+	db_query('SELECT * FROM {joke} WHERE vid = %d', $node->vid);
+	db_query("INSERT INTO {joke} (nid, vid, punchline) VALUES (%d, '%s')", $node->nid, $node->punchline);
+	db_query("UPDATE {joke} SET punchline = '%s' WHERE vid = %d", $node->punchline, $node->vid);
+	db_query('DELETE FROM {joke} WHERE nid = %d', $node->nid);
+#注意到表名位于花括号之间，这样做是为了表名可以前缀化，这样可以保证它们名称的唯一性。
+#下一个注意的地方是%d占位符，在Drupal中，查询语句通常使用占位符，真实值作为参数跟在后面。
+2.根据数据的类型，这里有不同的%修饰符。占位符和对应的含义如下：
+	%s String
+	%d Integer
+	%f Float
+	%b Binary data; do not enclose in ' '
+	%% Inserts a literal % sign (e.g., SELECT * FROM {users} WHERE name LIKE '%%%s%%')
+3.返回已发布博客日志的总数：
+	$sql = "SELECT COUNT(*) FROM {node} WHERE type = 'blog' AND status = 1";
+	$total = db_result(db_query($sql));
+4.迭代方式用于遍历整个结果集(输出所有的已发布的类型为blog的节点)：
+	$sql = "SELECT * FROM {node} WHERE type = 'blog' AND status = 1";
+	$result = db_query(db_rewrite_sql($sql));
+	while ($data = db_fetch_object($result)) {
+		$node = node_load($data->nid);
+		print node_view($node, TRUE);
+	}
+#db_fetch_object()从结果集中取出一行作为一个对象
+#db_fetch_array()将取出的结果作为一个数组
+4.10个最新发布的日志
+	$sql = "SELECT * FROM {node} n WHERE type = 'blog' AND status = 1 ORDER BY n.created DESC";
+	$result = db_query_range(db_rewrite_sql($sql), 0, 10);
+#并非所有的数据库都支持LIMIT语句，所以需要使用db_query_range()作为包裹函数
+5.将结果分页显示
+$sql = "SELECT * FROM {node} n WHERE type = 'blog' AND status = 1 ORDER BY n.created DESC";
+$result = pager_query(db_rewrite_sql($sql), 0, 10);
+while ($data = db_fetch_object($result)) {
+	$node = node_load($data->nid);
+	print node_view($node, TRUE);
+}
+//展示导航到其他页面的链接，不用向theme('pager')传递结果总数，因为结果总数在调用pager_query()时已记下
+print theme('pager', NULL, 10);
+6.使用临时表(略)
+
+http://www.soberma.com/notepad-quicktext
+
+------------------------Pro Drupal 7 Development---end------------------------
 ------------------------PHP---start------------------------
 ------------------------PHP----end-------------------------
