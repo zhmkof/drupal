@@ -309,7 +309,6 @@ files[] = first.module
 26.hook_node_access_records_alter()和hook_node_grants_alter()
 27.Devel Node Access module
 十、JavaScript
-1.notepad++去掉文件历史的config.xml文件设置项History nbMaxFile="0"
 十一、文件和图像
 十二、安装配置文件
 附录A、数据库访问
@@ -421,7 +420,22 @@ while ($data = db_fetch_object($result)) {
 //展示导航到其他页面的链接，不用向theme('pager')传递结果总数，因为结果总数在调用pager_query()时已记下
 print theme('pager', NULL, 10);
 6.使用临时表(略)
-
+二、API
+1.hook_menu()的type类型
+	MENU_NORMAL_ITEM:这是菜单条目使用的默认类型，它们会显示在菜单树中。 
+	MENU_ITEM_GROUPING:这种类型对条目进行分组，简单地列出要访问的子页面。 
+	MENU_CALLBACK:注册一个回调函数，它会生成在访问 URL 时要显示的内容。 
+	MENU_SUGGESTED_ITEM:管理员可以启用来自模块的建议条目。 
+	MENU_LOCAL_TASK:这些页面显示为选项卡。其他显示方式也是可能的。 
+	MENU_DEFAULT_LOCAL_TASK:每组本地任务还应该提供一个默认任务，它链接到与它的父条目相同的路径。
+2.单项选择框
+$form['table_name']['item_name'] = array(
+	'#type' => 'radios',
+	'#title' => t('show_name'),
+	'#default_value' => $value,
+	'#options' => array(t('Blocked'), t('Active')),
+);
+3.
 http://www.soberma.com/notepad-quicktext
 
 ------------------------Pro Drupal 7 Development---end------------------------
