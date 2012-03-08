@@ -428,6 +428,29 @@ print theme('pager', NULL, 10);
 	MENU_SUGGESTED_ITEM:管理员可以启用来自模块的建议条目。 
 	MENU_LOCAL_TASK:这些页面显示为选项卡。其他显示方式也是可能的。 
 	MENU_DEFAULT_LOCAL_TASK:每组本地任务还应该提供一个默认任务，它链接到与它的父条目相同的路径。
+"title": 必须
+"title callback": 生成title的函数，默认用t()。如果只需要生成输出字符串，设为FALSE
+"title arguments": 发送到t()或者自定义函数的参数
+"description":
+"page callback": 访问此页面时调用此函数以生成页面。如果没有设置，会用其父菜单项的回调代替
+"page arguments":
+"access callback": 访问权限回调函数，有权限时返回TRUE。只有MENU_DEFAULT_LOCAL_TASK能继承access callbacks。用user_access函数检查的话，参数必须是'access arguments'
+"access arguments": 
+"file": 调用page callback前被包含进来
+"file path":
+"load arguments": 发送到地址里的每一个通配符对象加载器的参数数组，在地址参数后面。如果一个模块注册地址node/%node/revisions/%/view
+"weight":
+"menu_name": Optional. 如果不希望此item出现在导航里，设置为自定义菜单
+"tab_parent": For local task menu items, the path of the task's parent item; defaults to the same path without the last component.
+"tab_root": For local task menu items, the path of the closest non-tab item; same default as "tab_parent".
+"position": Position of the block ('left' or 'right') on the system administration page for this item.
+"type": A bitmask of flags describing properties of the menu item. Many shortcut bitmasks are provided as constants in menu.inc:
+	MENU_NORMAL_ITEM:默认值，Normal menu items show up in the menu tree and can be moved/hidden by the administrator.
+	MENU_CALLBACK: Callbacks simply register a path so that the correct information is generated when the path is accessed.
+	MENU_SUGGESTED_ITEM: Modules may "suggest" menu items that the administrator may enable.
+	MENU_LOCAL_TASK: Local tasks are menu items that describe different displays of data, and are generally rendered as tabs.
+	MENU_DEFAULT_LOCAL_TASK: Every set of local tasks should provide one "default" task, which should display the same page as the parent item.
+
 2.单项选择框
 $form['table_name']['item_name'] = array(
 	'#type' => 'radios',
